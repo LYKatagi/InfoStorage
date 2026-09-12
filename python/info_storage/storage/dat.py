@@ -5,10 +5,7 @@ class DatStorage:
     def save(self, file_path, data):
         file_path = Path(file_path)
 
-        file_path.parent.mkdir(
-            parents=True,
-            exist_ok=True
-        )
+        file_path.parent.mkdir(parents=True, exist_ok=True)
 
         if isinstance(data, str):
             data = data.encode("utf-8")

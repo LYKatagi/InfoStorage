@@ -4,9 +4,7 @@ from time import monotonic
 class VaultTimer:
     def __init__(self, timeout=300.0):
         if timeout <= 0:
-            raise ValueError(
-                "O tempo limite deve ser maior que zero."
-            )
+            raise ValueError("O tempo limite deve ser maior que zero.")
 
         self.timeout = timeout
         self._last_activity = None

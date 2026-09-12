@@ -23,9 +23,7 @@ class Vault:
 
     def create(self, password, data):
         if self.file_path.exists():
-            raise VaultAlreadyExistsError(
-                "O cofre já existe."
-            )
+            raise VaultAlreadyExistsError("O cofre já existe.")
 
         salt = self.security.setup(password)
 
@@ -41,50 +39,33 @@ class Vault:
             + encrypted_data
         )
 
-        self.storage.save(
-            self.file_path,
-            content,
-            storage_type="dat"
-        )
+        self.storage.save(self.file_path, content, storage_type="dat")
 
         self.unlocked = True
         self.timer.start()
 
     def unlock(self, password):
-        content = self.storage.load(
-            self.file_path,
-            storage_type="dat"
-        )
+        content = self.storage.load(self.file_path, storage_type="dat")
 
         parts = content.split(b"\n", maxsplit=3)
 
         if len(parts) != 4:
-            raise InvalidVaultError(
-                "Estrutura do cofre inválida."
-            )
+            raise InvalidVaultError("Estrutura do cofre inválida.")
 
         magic, version, salt, encrypted_data = parts
 
         if magic != VAULT_MAGIC:
-            raise InvalidVaultError(
-                "Assinatura do cofre inválida."
-            )
+            raise InvalidVaultError("Assinatura do cofre inválida.")
 
         if version != str(FORMAT_VERSION).encode("ascii"):
-            raise InvalidVaultError(
-                "Versão do cofre não suportada."
-            )
+            raise InvalidVaultError("Versão do cofre não suportada.")
 
         self.security.unlock(password, salt)
 
         try:
-            decrypted_data = self.security.decrypt(
-                encrypted_data
-            )
+            decrypted_data = self.security.decrypt(encrypted_data)
         except ValueError as error:
-            raise InvalidVaultError(
-                "Senha incorreta ou dados corrompidos."
-            ) from error
+            raise InvalidVaultError("Senha incorreta ou dados corrompidos.") from error
 
         self.unlocked = True
         self.timer.start()
@@ -97,37 +78,28 @@ class Vault:
         encrypted_data = self.security.encrypt(data)
 
         content = (
-    VAULT_MAGIC
-    + b"\n"
-    + str(FORMAT_VERSION).encode("ascii")
-    + b"\n"
-    + self.security.salt
-    + b"\n"
-    + encrypted_data
-)
-
-        self.storage.save(
-            self.file_path,
-            content,
-            storage_type="dat"
+            VAULT_MAGIC
+            + b"\n"
+            + str(FORMAT_VERSION).encode("ascii")
+            + b"\n"
+            + self.security.salt
+            + b"\n"
+            + encrypted_data
         )
+
+        self.storage.save(self.file_path, content, storage_type="dat")
 
         self.timer.reset()
 
     def load(self):
         self._check_access()
 
-        content = self.storage.load(
-            self.file_path,
-            storage_type="dat"
-        )
+        content = self.storage.load(self.file_path, storage_type="dat")
 
         parts = content.split(b"\n", maxsplit=3)
 
         if len(parts) != 4:
-            raise InvalidVaultError(
-                "Estrutura do cofre inválida."
-            )
+            raise InvalidVaultError("Estrutura do cofre inválida.")
 
         _, _, _, encrypted_data = parts
 
@@ -150,6 +122,4 @@ class Vault:
         self.check_timeout()
 
         if not self.unlocked:
-            raise VaultLockedError(
-                "O cofre está bloqueado."
-            )
+            raise VaultLockedError("O cofre está bloqueado.")

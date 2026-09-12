@@ -12,11 +12,7 @@ def test_json_storage_save_and_load(tmp_path):
 
     file_path = tmp_path / "data.json"
 
-    data = {
-        "name": "GitHub",
-        "username": "luiz",
-        "active": True
-    }
+    data = {"name": "GitHub", "username": "luiz", "active": True}
 
     storage.save(file_path, data)
 
@@ -32,10 +28,7 @@ def test_json_storage_supports_unicode(tmp_path):
 
     file_path = tmp_path / "data.json"
 
-    data = {
-        "message": "Informação com acentuação",
-        "emoji": "🔐"
-    }
+    data = {"message": "Informação com acentuação", "emoji": "🔐"}
 
     storage.save(file_path, data)
 
@@ -60,10 +53,7 @@ def test_json_storage_file_contains_valid_json(tmp_path):
 
     file_path = tmp_path / "data.json"
 
-    data = {
-        "version": 1,
-        "items": ["one", "two"]
-    }
+    data = {"version": 1, "items": ["one", "two"]}
 
     storage.save(file_path, data)
 
@@ -137,10 +127,7 @@ def test_storage_uses_json_backend(tmp_path):
 
     file_path = tmp_path / "data.json"
 
-    data = {
-        "app": "InfoStorage",
-        "version": 1
-    }
+    data = {"app": "InfoStorage", "version": 1}
 
     storage.save(file_path, data)
 
@@ -164,20 +151,11 @@ def test_storage_manual_backend_selection(tmp_path):
 
     file_path = tmp_path / "file_without_extension"
 
-    data = {
-        "selected": "json"
-    }
+    data = {"selected": "json"}
 
-    storage.save(
-        file_path,
-        data,
-        storage_type="json"
-    )
+    storage.save(file_path, data, storage_type="json")
 
-    assert storage.load(
-        file_path,
-        storage_type="json"
-    ) == data
+    assert storage.load(file_path, storage_type="json") == data
 
 
 def test_storage_unsupported_backend(tmp_path):
@@ -186,10 +164,7 @@ def test_storage_unsupported_backend(tmp_path):
     file_path = tmp_path / "data.unknown"
 
     with pytest.raises(ValueError):
-        storage.save(
-            file_path,
-            {"test": True}
-        )
+        storage.save(file_path, {"test": True})
 
 
 def test_storage_unsupported_load_backend(tmp_path):

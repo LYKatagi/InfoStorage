@@ -6,27 +6,21 @@ from info_storage.storage.json import JSONStorage
 
 class Storage:
     def __init__(self):
-        self.backends = {
-            "json": JSONStorage(),
-            "dat": DatStorage()
-        }
+        self.backends = {"json": JSONStorage(), "dat": DatStorage()}
 
     def get_backend(self, storage_type):
         try:
             return self.backends[storage_type.lower()]
         except (KeyError, AttributeError) as error:
             raise ValueError(
-                "Tipo de armazenamento não suportado: "
-                + str(storage_type)
+                "Tipo de armazenamento não suportado: " + str(storage_type)
             ) from error
 
     def _detect_type(self, file_path):
         suffix = Path(file_path).suffix.lower()
 
         if not suffix:
-            raise ValueError(
-                "Não foi possível identificar o tipo do arquivo."
-            )
+            raise ValueError("Não foi possível identificar o tipo do arquivo.")
 
         return suffix.removeprefix(".")
 

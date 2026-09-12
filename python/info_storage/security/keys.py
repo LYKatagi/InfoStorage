@@ -9,12 +9,7 @@ from info_storage.security.fernet import Crypto
 
 class SecurityManager:
     def __init__(
-        self,
-        time_cost=3,
-        memory_cost=66576,
-        parallelism=4,
-        hash_len=32,
-        salt_len=16
+        self, time_cost=3, memory_cost=66576, parallelism=4, hash_len=32, salt_len=16
     ):
         self.time_cost = time_cost
         self.memory_cost = memory_cost
@@ -40,7 +35,7 @@ class SecurityManager:
             memory_cost=self.memory_cost,
             parallelism=self.parallelism,
             hash_len=self.hash_len,
-            type=Type.ID
+            type=Type.ID,
         )
 
         return base64.urlsafe_b64encode(raw_key)
