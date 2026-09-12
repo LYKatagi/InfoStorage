@@ -1,0 +1,74 @@
+# ==============================
+# Git Attributes
+# ==============================
+
+# Text files
+* text=auto
+
+# Source code
+*.py    text
+*.js    text
+*.ts    text
+*.c     text
+*.h     text
+*.cpp   text
+*.hpp   text
+*.java  text
+*.rs    text
+*.go    text
+
+# Web
+*.html  text
+*.css   text
+*.json  text
+*.xml   text
+*.svg   text
+
+# Documentation
+*.md    text
+*.txt   text
+*.rst   text
+
+# Shell / configuration
+*.sh    text eol=lf
+*.bash  text eol=lf
+*.yml   text
+*.yaml  text
+*.toml  text
+*.ini   text
+*.conf  text
+
+# Windows scripts
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# Binary files
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.bmp   binary
+
+*.zip   binary
+*.7z    binary
+*.rar   binary
+*.tar   binary
+*.gz    binary
+
+*.exe   binary
+*.dll   binary
+*.bin   binary
+*.iso   binary
+
+# Fonts
+*.ttf   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+
+# GitHub
+.gitattributes text
+.gitignore   text

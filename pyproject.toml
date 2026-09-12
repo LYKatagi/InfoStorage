@@ -1,0 +1,8 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build-meta"
+[project]
+name = "info-storage"
+version = "v0.0.1"
+description = "Uma ferramenta para armazenar contas e informações confidenciais de forma rápida e segura"
+dependencies = []
