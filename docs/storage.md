@@ -46,10 +46,7 @@ O `Storage` funciona como ponto de entrada para operações de leitura e escrita
 Ele mantém os backends disponíveis:
 
 ```python
-self.backends = {
-    "json": JSONStorage(),
-    "dat": DatStorage()
-}
+self.backends = {"json": JSONStorage(), "dat": DatStorage()}
 ```
 
 Isso permite selecionar o backend manualmente ou detectar o formato através da extensão do arquivo.
@@ -97,8 +94,8 @@ O método `save()`:
 O JSON utiliza:
 
 ```python
-indent=4
-ensure_ascii=False
+indent = 4
+ensure_ascii = False
 ```
 
 Isso mantém o arquivo organizado e permite caracteres Unicode.

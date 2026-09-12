@@ -369,16 +369,11 @@ from info_storage.vault import Vault
 
 vault = Vault("vault.dat")
 
-vault.create(
-    "minha-senha",
-    "dados secretos"
-)
+vault.create("minha-senha", "dados secretos")
 
 data = vault.load()
 
-vault.save(
-    "novos dados secretos"
-)
+vault.save("novos dados secretos")
 
 vault.lock()
 ```
@@ -391,9 +386,7 @@ from info_storage.vault import Vault
 
 vault = Vault("vault.dat")
 
-data = vault.unlock(
-    "minha-senha"
-)
+data = vault.unlock("minha-senha")
 ```
 
 ## Ciclo de vida
