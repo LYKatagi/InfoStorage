@@ -1,8 +1,101 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build-meta"
+requires = [
+    "setuptools>=75",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+
 [project]
 name = "info-storage"
-version = "v0.0.1"
+version = "0.0.1"
+
 description = "Uma ferramenta para armazenar contas e informações confidenciais de forma rápida e segura"
-dependencies = ["argon2-cffi"]
+
+readme = "python/README.txt"
+requires-python = ">=3.12"
+
+dependencies = [
+    "argon2-cffi>=23.1",
+    "cryptography>=42"
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.16"
+]
+
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+
+[tool.setuptools.packages.find]
+where = ["python"]
+
+
+[tool.pytest.ini_options]
+testpaths = [
+    "python/tests"
+]
+
+python_files = [
+    "test_*.py",
+    "*_test.py"
+]
+
+python_classes = [
+    "Test*"
+]
+
+python_functions = [
+    "test_*"
+]
+
+addopts = [
+    "-ra",
+    "--strict-markers"
+]
+
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+src = [
+    "python"
+]
+
+exclude = [
+    ".git",
+    ".venv",
+    ".pytest_cache",
+    ".ruff_cache",
+    "android/.gradle",
+    "android/.idea",
+    "android/build",
+    "android/app/build"
+]
+
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "B",
+    "UP",
+    "N",
+    "SIM"
+]
+
+ignore = [
+    "E501"
+]
+
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
