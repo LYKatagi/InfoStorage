@@ -101,7 +101,7 @@ class Vault:
     + b"\n"
     + str(FORMAT_VERSION).encode("ascii")
     + b"\n"
-    + salt
+    + self.security.salt
     + b"\n"
     + encrypted_data
 )
