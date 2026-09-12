@@ -5,4 +5,4 @@ build-backend = "setuptools.build-meta"
 name = "info-storage"
 version = "v0.0.1"
 description = "Uma ferramenta para armazenar contas e informações confidenciais de forma rápida e segura"
-dependencies = []
+dependencies = ["argon2-cffi"]
