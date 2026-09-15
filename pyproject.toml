@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "info-storage"
-version = "0.0.1"
+version = "0.1.0"
 
 description = "Uma ferramenta para armazenar contas e informações confidenciais de forma rápida e segura"
 
