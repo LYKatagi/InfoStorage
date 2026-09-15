@@ -3,45 +3,59 @@ package com.luiz.infostorage
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.luiz.infostorage.ui.theme.InfoStorageTheme
+import android.widget.Toast
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        val bridge = PythonBridge(this)
+
         setContent {
-            InfoStorageTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            InfoStorageScreen(
+                bridge = bridge,
+                showMessage = { message ->
+                    Toast.makeText(
+                        this,
+                        message,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            }
+            )
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun InfoStorageScreen(
+    bridge: PythonBridge,
+    showMessage: (String) -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text("InfoStorage")
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    InfoStorageTheme {
-        Greeting("Android")
+        Button(
+            onClick = {
+                val result = bridge.getStatusJson()
+                showMessage(result)
+            }
+        ) {
+            Text("Testar Python")
+        }
     }
 }
