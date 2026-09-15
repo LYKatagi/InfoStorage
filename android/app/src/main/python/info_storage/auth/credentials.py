@@ -19,15 +19,11 @@ class Credentials:
 
     def create(self, password: str) -> None:
         if self.exists():
-            raise FileExistsError(
-                "As credenciais já existem."
-            )
+            raise FileExistsError("As credenciais já existem.")
 
         self._validate_password(password)
 
-        password_hash = self.security.hasher.hash_password(
-            password
-        )
+        password_hash = self.security.hasher.hash_password(password)
 
         data = {
             "version": 1,
@@ -38,9 +34,7 @@ class Credentials:
 
     def verify(self, password: str) -> bool:
         if not self.exists():
-            raise FileNotFoundError(
-                "O arquivo de credenciais não existe."
-            )
+            raise FileNotFoundError("O arquivo de credenciais não existe.")
 
         self._validate_password(password)
 
@@ -57,20 +51,14 @@ class Credentials:
 
     def load(self) -> dict:
         if not self.exists():
-            raise FileNotFoundError(
-                "O arquivo de credenciais não existe."
-            )
+            raise FileNotFoundError("O arquivo de credenciais não existe.")
 
         return self.storage.load(self.file_path)
 
     @staticmethod
     def _validate_password(password: str) -> None:
         if not isinstance(password, str):
-            raise TypeError(
-                "A senha deve ser uma string."
-            )
+            raise TypeError("A senha deve ser uma string.")
 
         if not password:
-            raise ValueError(
-                "A senha não pode estar vazia."
-            )
+            raise ValueError("A senha não pode estar vazia.")

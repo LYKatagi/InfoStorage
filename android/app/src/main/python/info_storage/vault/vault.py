@@ -17,12 +17,17 @@ from info_storage.vault.vault_backend import VaultBackend
 
 
 class Vault:
-    def __init__(self, file_path, timeout=300):
+    def __init__(
+    self,
+    file_path,
+    timeout=300,
+    security=None,
+):
         self.file_path = Path(file_path)
 
         self.timeout = timeout
 
-        self.security = SecurityManager()
+        self.security = security or SecurityManager()
         self.timer = VaultTimer(timeout)
 
         self.unlocked = False
@@ -50,32 +55,44 @@ class Vault:
 
     def unlock(self, password):
         if not self.file_path.exists():
-            raise InvalidVaultError("O arquivo do cofre não existe.")
+            raise InvalidVaultError(
+                "O arquivo do cofre não existe."
+            )
 
         content = self.file_path.read_bytes()
 
         parts = content.split(b"\n", maxsplit=4)
 
         if len(parts) != 5:
-            raise InvalidVaultError("Estrutura do cofre inválida.")
+            raise InvalidVaultError(
+                "Estrutura do cofre inválida."
+            )
 
         magic = parts[0]
         version = parts[1]
         salt_hex = parts[2]
 
         if magic != VAULT_MAGIC:
-            raise InvalidVaultError("Assinatura do cofre inválida.")
+            raise InvalidVaultError(
+                "Assinatura do cofre inválida."
+            )
 
         if version != str(FORMAT_VERSION).encode("ascii"):
-            raise InvalidVaultError("Versão do cofre não suportada.")
+            raise InvalidVaultError(
+                "Versão do cofre não suportada."
+            )
 
         try:
             salt = binascii.unhexlify(salt_hex)
         except (binascii.Error, ValueError) as error:
-            raise InvalidVaultError("Salt inválido.") from error
+            raise InvalidVaultError(
+                "Salt inválido."
+            ) from error
 
         if len(salt) != 16:
-            raise InvalidVaultError("Salt inválido.")
+            raise InvalidVaultError(
+                "Salt inválido."
+            )
 
         self.security.unlock(password, salt)
 
@@ -84,15 +101,17 @@ class Vault:
         try:
             payload = backend.parse(content)
         except IntegrityError:
-            self.security = SecurityManager()
+            self.security.lock()
             self.unlocked = False
             self.timer.stop()
             raise
 
         try:
-            data = self.security.decrypt(payload.encrypted_data)
+            data = self.security.decrypt(
+                payload.encrypted_data
+            )
         except ValueError as error:
-            self.security = SecurityManager()
+            self.security.lock()
             self.unlocked = False
             self.timer.stop()
 
@@ -104,7 +123,6 @@ class Vault:
         self.timer.start()
 
         return data
-
     def save(self, data):
         self._check_access()
 
@@ -140,8 +158,10 @@ class Vault:
 
         return data
 
+    
+    
     def lock(self):
-        self.security = SecurityManager()
+        self.security.lock()
 
         self.unlocked = False
 

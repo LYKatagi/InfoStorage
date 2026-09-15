@@ -98,6 +98,4 @@ class SecurityManager:
 
     def _check_unlocked(self) -> None:
         if self.crypto is None:
-            raise RuntimeError(
-                "O sistema de segurança está bloqueado."
-            )
+            raise RuntimeError("O sistema de segurança está bloqueado.")
