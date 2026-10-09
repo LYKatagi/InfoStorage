@@ -1,7 +1,10 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.compose)
+    id("com.android.application")
+    id("com.chaquo.python")
+    id("org.jetbrains.kotlin.plugin.compose") // Adicione esta linha aqui
 }
+
+
 
 android {
     namespace = "com.luiz.infostorage"
@@ -17,6 +20,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters.addAll(setOf("arm64-v8a", "x86_64"))
+        }
+
+        
     }
 
     buildTypes {
@@ -32,6 +41,19 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+}
+// Certifique-se de que este bloco está bem no final do arquivo, FORA do bloco android { }
+
+
+chaquopy {
+    defaultConfig {
+        version = "3.13"
+        buildPython("C:/Users/Luiz/AppData/Local/Temp/InfoStorage-Python313/python.exe")
+        pip {
+            install("argon2-cffi")
+            install("cryptography")
+        }
     }
 }
 

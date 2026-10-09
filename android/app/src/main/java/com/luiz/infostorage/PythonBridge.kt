@@ -3,6 +3,13 @@ package com.luiz.infostorage
 import android.content.Context
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import org.json.JSONObject
+
+data class PythonAppStatus(
+    val credentialsExist: Boolean,
+    val vaultExists: Boolean,
+    val unlocked: Boolean,
+)
 
 class PythonBridge(
     context: Context
@@ -31,10 +38,13 @@ class PythonBridge(
         )
     }
 
-    fun getStatusJson(): String {
-        return app.callAttr(
-            "get_status_json"
-        ).toString()
+    fun getStatus(): PythonAppStatus {
+        val status = JSONObject(app.callAttr("get_status_json").toString())
+        return PythonAppStatus(
+            credentialsExist = status.optBoolean("account_exists"),
+            vaultExists = status.optBoolean("vault_exists"),
+            unlocked = status.optBoolean("unlocked"),
+        )
     }
 
     fun register(password: String): String {
