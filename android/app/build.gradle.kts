@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("com.chaquo.python")
     id("org.jetbrains.kotlin.plugin.compose") // Adicione esta linha aqui
+
 }
 
 
@@ -49,7 +50,7 @@ android {
 chaquopy {
     defaultConfig {
         version = "3.13"
-        buildPython("C:/Users/Luiz/AppData/Local/Temp/InfoStorage-Python313/python.exe")
+        buildPython("uv", "run", "--no-project", "--python", "3.13", "python")
         pip {
             install("argon2-cffi")
             install("cryptography")
@@ -73,4 +74,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
 }

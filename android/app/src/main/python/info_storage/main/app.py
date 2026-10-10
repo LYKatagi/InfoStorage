@@ -94,16 +94,16 @@ def main() -> None:
     )
 
     while True:
+        auth_action = "Login" if authenticator.credentials.exists() else "Criar conta"
         print(
-            """
+            f"""
 ==============================
         INFOSTORAGE
 ==============================
 
-1. Criar conta
-2. Login
-3. Logout
-4. Ver status
+1. {auth_action}
+2. Logout
+3. Ver status
 0. Sair
 """
         )
@@ -111,15 +111,15 @@ def main() -> None:
         option = input("Escolha uma opção: ").strip()
 
         if option == "1":
-            register_user(authenticator)
+            if authenticator.credentials.exists():
+                login(authenticator)
+            else:
+                register_user(authenticator)
 
         elif option == "2":
-            login(authenticator)
-
-        elif option == "3":
             logout(authenticator)
 
-        elif option == "4":
+        elif option == "3":
             show_status(authenticator)
 
         elif option == "0":

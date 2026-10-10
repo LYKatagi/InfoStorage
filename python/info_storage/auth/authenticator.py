@@ -61,12 +61,11 @@ class Authenticator:
 
     def logout(self):
         if not self._authenticated:
-            raise UserNotAuthenticatedError(
-                "O usuário não está autenticado."
-            )
+            raise UserNotAuthenticatedError("O usuário não está autenticado.")
 
         self._authenticated = False
         self.security.lock()
+
     def require_authentication(self) -> None:
         if not self._authenticated:
             raise UserNotAuthenticatedError("Autenticação necessária.")

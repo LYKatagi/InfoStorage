@@ -17,7 +17,9 @@ class InfoStorageApp:
         self.vault = Vault(self.vault_path, security=self.authenticator.security)
 
     def _result(self, success: bool, message: str, **extra) -> str:
-        return json.dumps({"success": success, "message": message, **extra}, ensure_ascii=False)
+        return json.dumps(
+            {"success": success, "message": message, **extra}, ensure_ascii=False
+        )
 
     def get_status_json(self) -> str:
         return self._result(
@@ -43,7 +45,9 @@ class InfoStorageApp:
                 self.authenticator.authenticate(password)
             if self.vault_path.exists():
                 data = self.vault.unlock(password)
-                return self._result(True, "Cofre desbloqueado.", data=self._decode_records(data))
+                return self._result(
+                    True, "Cofre desbloqueado.", data=self._decode_records(data)
+                )
             self.vault.create(password, json.dumps([], ensure_ascii=False))
             return self._result(True, "Cofre criado com sucesso.", data=[])
         except Exception as error:
@@ -54,9 +58,15 @@ class InfoStorageApp:
         try:
             self.authenticator.authenticate(password)
             if not self.vault_path.exists():
-                return self._result(True, "Sessão iniciada. Crie seu cofre para continuar.", needs_vault=True)
+                return self._result(
+                    True,
+                    "Sessão iniciada. Crie seu cofre para continuar.",
+                    needs_vault=True,
+                )
             data = self.vault.unlock(password)
-            return self._result(True, "Cofre desbloqueado.", data=self._decode_records(data))
+            return self._result(
+                True, "Cofre desbloqueado.", data=self._decode_records(data)
+            )
         except (InvalidCredentialsError, ValueError, TypeError) as error:
             self._clear_session()
             return self._result(False, str(error))

@@ -3,6 +3,7 @@ package com.luiz.infostorage
 import android.content.Context
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import org.json.JSONArray
 import org.json.JSONObject
 
 data class PythonAppStatus(
@@ -79,6 +80,14 @@ class PythonBridge(
             "save_data_json",
             dataJson
         ).toString()
+    }
+
+    fun addNote(noteJson: String): String {
+        return app.callAttr("add_note_json", noteJson).toString()
+    }
+
+    fun getNotes(): String {
+        return app.callAttr("get_notes_json").toString()
     }
 
     fun logout(): String {

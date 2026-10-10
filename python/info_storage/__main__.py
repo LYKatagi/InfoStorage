@@ -1,7 +1,7 @@
 from info_storage.main.app import main
 
 if __name__ == "__main__":
-    try: 
+    try:
         main()
     except KeyboardInterrupt:
         print("\nPrograma encerrado pelo usuário.")

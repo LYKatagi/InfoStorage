@@ -172,6 +172,41 @@ def test_integrity_failure(tmp_path):
     with pytest.raises(IntegrityError):
         vault.unlock("123456")
 
+    assert vault.unlocked is False
+    assert vault.security.unlocked is False
+
+
+def test_malformed_signature_locks_security_after_unlock_failure(tmp_path):
+    vault_path = tmp_path / "vault.dat"
+    vault = Vault(vault_path)
+    vault.create("123456", "dados secretos")
+
+    parts = vault_path.read_bytes().split(b"\n", maxsplit=4)
+    parts[3] = b"z" + parts[3][1:]
+    vault_path.write_bytes(b"\n".join(parts))
+    vault.lock()
+
+    with pytest.raises(InvalidVaultError):
+        vault.unlock("123456")
+
+    assert vault.unlocked is False
+    assert vault.security.unlocked is False
+
+
+def test_load_integrity_failure_locks_vault(tmp_path):
+    vault_path = tmp_path / "vault.dat"
+    vault = Vault(vault_path)
+    vault.create("123456", "dados secretos")
+
+    content = vault_path.read_bytes()
+    vault_path.write_bytes(content[:-1] + bytes([content[-1] ^ 1]))
+
+    with pytest.raises(IntegrityError):
+        vault.load()
+
+    assert vault.unlocked is False
+    assert vault.security.unlocked is False
+
 
 def test_integrity_signature_modified(tmp_path):
     vault_path = tmp_path / "vault.dat"

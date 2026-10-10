@@ -3,7 +3,6 @@ from pathlib import Path
 
 from info_storage.security.keys import SecurityManager
 from info_storage.vault.exceptions import (
-    IntegrityError,
     InvalidVaultError,
     VaultAlreadyExistsError,
     VaultLockedError,
@@ -18,11 +17,11 @@ from info_storage.vault.vault_backend import VaultBackend
 
 class Vault:
     def __init__(
-    self,
-    file_path,
-    timeout=300,
-    security=None,
-):
+        self,
+        file_path,
+        timeout=300,
+        security=None,
+    ):
         self.file_path = Path(file_path)
 
         self.timeout = timeout
@@ -54,75 +53,56 @@ class Vault:
         return data
 
     def unlock(self, password):
-        if not self.file_path.exists():
-            raise InvalidVaultError(
-                "O arquivo do cofre não existe."
-            )
-
-        content = self.file_path.read_bytes()
-
-        parts = content.split(b"\n", maxsplit=4)
-
-        if len(parts) != 5:
-            raise InvalidVaultError(
-                "Estrutura do cofre inválida."
-            )
-
-        magic = parts[0]
-        version = parts[1]
-        salt_hex = parts[2]
-
-        if magic != VAULT_MAGIC:
-            raise InvalidVaultError(
-                "Assinatura do cofre inválida."
-            )
-
-        if version != str(FORMAT_VERSION).encode("ascii"):
-            raise InvalidVaultError(
-                "Versão do cofre não suportada."
-            )
-
+        self.lock()
         try:
-            salt = binascii.unhexlify(salt_hex)
-        except (binascii.Error, ValueError) as error:
-            raise InvalidVaultError(
-                "Salt inválido."
-            ) from error
+            if not self.file_path.exists():
+                raise InvalidVaultError("O arquivo do cofre não existe.")
 
-        if len(salt) != 16:
-            raise InvalidVaultError(
-                "Salt inválido."
-            )
+            content = self.file_path.read_bytes()
 
-        self.security.unlock(password, salt)
+            parts = content.split(b"\n", maxsplit=4)
 
-        backend = VaultBackend(self.security.key)
+            if len(parts) != 5:
+                raise InvalidVaultError("Estrutura do cofre inválida.")
 
-        try:
+            magic = parts[0]
+            version = parts[1]
+            salt_hex = parts[2]
+
+            if magic != VAULT_MAGIC:
+                raise InvalidVaultError("Assinatura do cofre inválida.")
+
+            if version != str(FORMAT_VERSION).encode("ascii"):
+                raise InvalidVaultError("Versão do cofre não suportada.")
+
+            try:
+                salt = binascii.unhexlify(salt_hex)
+            except (binascii.Error, ValueError) as error:
+                raise InvalidVaultError("Salt inválido.") from error
+
+            if len(salt) != 16:
+                raise InvalidVaultError("Salt inválido.")
+
+            self.security.unlock(password, salt)
+
+            backend = VaultBackend(self.security.key)
             payload = backend.parse(content)
-        except IntegrityError:
-            self.security.lock()
-            self.unlocked = False
-            self.timer.stop()
+
+            try:
+                data = self.security.decrypt(payload.encrypted_data)
+            except ValueError as error:
+                raise InvalidVaultError(
+                    "Não foi possível descriptografar o cofre."
+                ) from error
+        except Exception:
+            self.lock()
             raise
-
-        try:
-            data = self.security.decrypt(
-                payload.encrypted_data
-            )
-        except ValueError as error:
-            self.security.lock()
-            self.unlocked = False
-            self.timer.stop()
-
-            raise InvalidVaultError(
-                "Não foi possível descriptografar o cofre."
-            ) from error
 
         self.unlocked = True
         self.timer.start()
 
         return data
+
     def save(self, data):
         self._check_access()
 
@@ -140,26 +120,24 @@ class Vault:
 
     def load(self):
         self._check_access()
-
-        content = self.file_path.read_bytes()
-
-        backend = VaultBackend(self.security.key)
-
-        payload = backend.parse(content)
-
         try:
+            content = self.file_path.read_bytes()
+            backend = VaultBackend(self.security.key)
+            payload = backend.parse(content)
             data = self.security.decrypt(payload.encrypted_data)
         except ValueError as error:
+            self.lock()
             raise InvalidVaultError(
                 "Não foi possível descriptografar o cofre."
             ) from error
+        except Exception:
+            self.lock()
+            raise
 
         self.timer.reset()
 
         return data
 
-    
-    
     def lock(self):
         self.security.lock()
 
