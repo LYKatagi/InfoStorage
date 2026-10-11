@@ -2,3 +2,7 @@ argon2-cffi==25.1.0
 argon2-cffi-bindings==26.1.0
 cffi==2.1.1
 cryptography==50.0.1
+fastapi>=0.115
+uvicorn[standard]>=0.34
+flask>=3.1
+requests>=2.32

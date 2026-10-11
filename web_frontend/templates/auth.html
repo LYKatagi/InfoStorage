@@ -1,0 +1,58 @@
+{% extends "base.html" %} {% block title %}{{ 'Criar conta' if mode ==
+'register' else 'Entrar' }} · InfoStorage{% endblock %} {% block content %}
+<section class="auth-layout">
+  <div class="auth-intro">
+    <p class="eyebrow">SEU ESPAÇO PRIVADO</p>
+    <h1>
+      {{ 'Crie seu cofre.' if mode == 'register' else 'Acesse seu cofre.' }}
+    </h1>
+    <p class="intro-copy">
+      Credenciais e notas protegidas pela criptografia do InfoStorage.
+    </p>
+    <div class="security-note">
+      <span class="status-dot"></span
+      ><span>Conexão local com a API autenticada</span>
+    </div>
+  </div>
+  <form class="auth-form" method="post" action="{{ url_for(mode) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+    <h2>{{ 'Nova conta' if mode == 'register' else 'Entrar' }}</h2>
+    <label for="username">Usuário</label>
+    <input
+      id="username"
+      name="username"
+      autocomplete="username"
+      minlength="3"
+      maxlength="64"
+      required
+      autofocus
+    />
+    <label for="password">Senha mestra</label>
+    <input
+      id="password"
+      name="password"
+      type="password"
+      autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}"
+      required
+    />
+    {% if mode == 'register' %}
+    <label for="confirmation">Confirmar senha</label>
+    <input
+      id="confirmation"
+      name="confirmation"
+      type="password"
+      autocomplete="new-password"
+      required
+    />
+    {% endif %}
+    <button class="primary-button" type="submit">
+      {{ 'Criar cofre' if mode == 'register' else 'Desbloquear' }}
+    </button>
+    <p class="form-switch">
+      {% if mode == 'register' %}Já tem conta?
+      <a href="{{ url_for('login') }}">Entrar</a> {% else %}Primeira vez?
+      <a href="{{ url_for('register') }}">Criar conta</a>{% endif %}
+    </p>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "base.html" %} {% block title %}Meu cofre · InfoStorage{% endblock %}
+{% block content %}
+<section class="dashboard-heading">
+  <div>
+    <p class="eyebrow">COFRE DESBLOQUEADO</p>
+    <h1>Seu espaço seguro</h1>
+    <p class="intro-copy">Organize acessos e informações privadas.</p>
+  </div>
+  <div class="summary-strip" aria-label="Resumo do cofre">
+    <div>
+      <strong>{{ summary.credential_count }}</strong><span>credenciais</span>
+    </div>
+    <div><strong>{{ summary.note_count }}</strong><span>notas</span></div>
+  </div>
+</section>
+
+<form
+  class="search-bar"
+  action="{{ url_for('dashboard') }}"
+  method="get"
+  role="search"
+>
+  <label class="visually-hidden" for="q">Buscar no cofre</label>
+  <input
+    id="q"
+    name="q"
+    value="{{ query }}"
+    minlength="2"
+    maxlength="120"
+    placeholder="Buscar títulos, usuários e notas"
+  />
+  <button class="secondary-button" type="submit">Buscar</button>
+</form>
+{% if query %}
+<section class="search-results" aria-live="polite">
+  <h2>Resultados para “{{ query }}”</h2>
+  {% if results %}
+  <ul>
+    {% for item in results %}
+    <li>
+      <span class="kind-label"
+        >{{ 'Credencial' if item.collection == 'credentials' else 'Nota'
+        }}</span
+      ><strong>{{ item.title }}</strong
+      ><small>{{ ', '.join(item.matched_fields) }}</small>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty-inline">Nenhum resultado encontrado.</p>
+  {% endif %}
+</section>
+{% endif %}
+
+<div class="content-grid">
+  <section class="collection-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">ACESSOS</p>
+        <h2>Credenciais</h2>
+      </div>
+      <span class="count-chip">{{ credentials|length }}</span>
+    </div>
+    <form
+      class="item-form"
+      action="{{ url_for('create_credential') }}"
+      method="post"
+    >
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <h3>Adicionar credencial</h3>
+      <label for="credential-title">Serviço</label
+      ><input id="credential-title" name="title" maxlength="200" required />
+      <label for="credential-user">Usuário ou e-mail</label
+      ><input id="credential-user" name="username" maxlength="254" />
+      <label for="credential-password">Senha</label
+      ><input
+        id="credential-password"
+        name="password"
+        type="password"
+        maxlength="4096"
+        required
+      />
+      <label for="credential-notes">Observações</label
+      ><textarea
+        id="credential-notes"
+        name="notes"
+        rows="2"
+        maxlength="4000"
+      ></textarea>
+      <button class="primary-button" type="submit">Salvar credencial</button>
+    </form>
+    <div class="item-list">
+      {% for item in credentials %}
+      <article class="vault-item">
+        <div class="item-main">
+          <span class="item-initial">{{ item.title[:1]|upper }}</span>
+          <div>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.username or 'Sem usuário informado' }}</p>
+          </div>
+        </div>
+        <details class="secret-disclosure">
+          <summary>Mostrar senha</summary>
+          <code>{{ item.password }}</code>
+        </details>
+        {% if item.notes %}
+        <p class="item-note">{{ item.notes }}</p>
+        {% endif %}
+        <form
+          action="{{ url_for('delete_credential', credential_id=item.id) }}"
+          method="post"
+          onsubmit="return confirm('Remover esta credencial?');"
+        >
+          <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token }}"
+          /><button class="text-danger" type="submit">Remover</button>
+        </form>
+      </article>
+      {% else %}
+      <p class="empty-state">Nenhuma credencial salva.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="collection-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">ANOTAÇÕES PRIVADAS</p>
+        <h2>Notas</h2>
+      </div>
+      <span class="count-chip">{{ notes|length }}</span>
+    </div>
+    <form class="item-form" action="{{ url_for('create_note') }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+      <h3>Nova nota</h3>
+      <label for="note-title">Título</label
+      ><input id="note-title" name="title" maxlength="200" required />
+      <label for="note-content">Conteúdo</label
+      ><textarea
+        id="note-content"
+        name="content"
+        rows="4"
+        maxlength="50000"
+        required
+      ></textarea>
+      <button class="primary-button" type="submit">Salvar nota</button>
+    </form>
+    <div class="item-list">
+      {% for item in notes %}
+      <article class="vault-item note-item">
+        <div class="item-main">
+          <span class="item-initial note-initial">N</span>
+          <div>
+            <h3>{{ item.title }}</h3>
+            <p class="note-content">{{ item.content }}</p>
+          </div>
+        </div>
+        <form
+          action="{{ url_for('delete_note', note_id=item.id) }}"
+          method="post"
+          onsubmit="return confirm('Remover esta nota?');"
+        >
+          <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token }}"
+          /><button class="text-danger" type="submit">Remover</button>
+        </form>
+      </article>
+      {% else %}
+      <p class="empty-state">Nenhuma nota salva.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>{% block title %}InfoStorage{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <header class="topbar">
+      <a
+        class="brand"
+        href="{{ url_for('index') }}"
+        aria-label="InfoStorage início"
+      >
+        <span class="brand-mark">IS</span>
+        <span><strong>InfoStorage</strong><small>cofre pessoal</small></span>
+      </a>
+      {% if current_user %}
+      <div class="topbar-user">
+        <span class="user-name">{{ current_user }}</span>
+        <form action="{{ url_for('logout') }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+          <button class="quiet-button" type="submit">Trancar</button>
+        </form>
+      </div>
+      {% endif %}
+    </header>
+    <main class="page-shell">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-stack" aria-live="polite">
+        {% for category, message in messages %}
+        <p class="flash {{ category }}">{{ message }}</p>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </main>
+    <footer class="page-footer">Dados protegidos pelo vault InfoStorage</footer>
+  </body>
+</html>

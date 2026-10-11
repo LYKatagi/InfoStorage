@@ -1,8 +1,5 @@
 [build-system]
-requires = [
-    "setuptools>=75",
-    "wheel"
-]
+requires = ["setuptools>=75", "wheel"]
 build-backend = "setuptools.build_meta"
 
 
@@ -17,54 +14,41 @@ requires-python = ">=3.12"
 
 dependencies = [
     "argon2-cffi>=23.1",
-    "cryptography>=42"
+    "cryptography>=42",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "flask>=3.1",
+    "requests>=2.32",
 ]
 
 [dependency-groups]
-dev = [
-    "pytest>=8",
-    "ruff>=0.16"
-]
+dev = ["pytest>=8", "ruff>=0.16", "httpx>=0.27"]
 
 
 [tool.setuptools]
-package-dir = {"" = "python"}
+package-dir = { "" = "python" }
 
 [tool.setuptools.packages.find]
 where = ["python"]
 
 
 [tool.pytest.ini_options]
-testpaths = [
-    "python/tests"
-]
+testpaths = ["python/tests", "web_frontend/tests"]
 
-python_files = [
-    "test_*.py",
-    "*_test.py"
-]
+python_files = ["test_*.py", "*_test.py"]
 
-python_classes = [
-    "Test*"
-]
+python_classes = ["Test*"]
 
-python_functions = [
-    "test_*"
-]
+python_functions = ["test_*"]
 
-addopts = [
-    "-ra",
-    "--strict-markers"
-]
+addopts = ["-ra", "--strict-markers"]
 
 
 [tool.ruff]
 target-version = "py312"
 line-length = 88
 
-src = [
-    "python"
-]
+src = ["python"]
 
 exclude = [
     ".git",
@@ -74,25 +58,14 @@ exclude = [
     "android/.gradle",
     "android/.idea",
     "android/build",
-    "android/app/build"
+    "android/app/build",
 ]
 
 
 [tool.ruff.lint]
-select = [
-    "E",
-    "F",
-    "W",
-    "I",
-    "B",
-    "UP",
-    "N",
-    "SIM"
-]
+select = ["E", "F", "W", "I", "B", "UP", "N", "SIM"]
 
-ignore = [
-    "E501"
-]
+ignore = ["E501"]
 
 
 [tool.ruff.format]
