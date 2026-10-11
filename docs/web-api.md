@@ -68,6 +68,8 @@ Credenciais usam `title`, `username`, `password` e `notes`. Notas usam `title` e
 
 O servidor deve permanecer em `127.0.0.1` para desenvolvimento local. Não exponha a API à rede pública sem TLS, limitação de tentativas, gestão persistente de sessões e uma revisão de segurança. As sessões em memória não são compartilhadas entre processos, portanto execute uma única instância do Uvicorn.
 
+O aplicativo Tkinter pode ser iniciado com `py -m info_storage.desktop`. Ele oferece armazenamento local cifrado e sincronização opcional com a API; no modo local, não envia dados pela rede. Para sincronizar pelo emulador Android, use `http://10.0.2.2:8000`; no desktop local, use `http://127.0.0.1:8000`. Para hosts remotos, configure HTTPS.
+
 ## Testes
 
 ```powershell

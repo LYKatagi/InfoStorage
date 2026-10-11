@@ -290,6 +290,19 @@ As dependências também podem ser instaladas através de:
 pip install -r requirements.txt
 ```
 
+### Compilação
+
+O `Makefile` compila os módulos Python do core/desktop e gera o APK Android. Ele não executa nem inclui a API FastAPI ou o frontend Flask.
+
+```bash
+make help
+make
+```
+
+No Windows, use `mingw32-make`. Para o alvo Android, configure `JAVA_HOME` para o JDK 25 do Android Studio e tenha `uv` instalado, usado pelo Chaquopy para selecionar Python 3.13.
+
+Alvos individuais: `make compile-python` e `make android`.
+
 ## Princípios
 
 O projeto segue alguns princípios básicos:
