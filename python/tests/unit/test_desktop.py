@@ -49,6 +49,26 @@ def test_legacy_vault_items_get_stable_ids():
     assert contents["notes"] == []
 
 
+def test_local_registration_rolls_back_when_vault_creation_fails(tmp_path, monkeypatch):
+    from info_storage.desktop import storage as desktop_storage
+
+    store = LocalVaultStore(tmp_path)
+
+    def fail_create(self, password, data):
+        raise OSError("falha simulada ao criar vault")
+
+    monkeypatch.setattr(desktop_storage.Vault, "create", fail_create)
+    with pytest.raises(OSError, match="falha simulada"):
+        store.create_account("senha-local")
+
+    assert store.account_exists is False
+    assert store.vault.file_path.exists() is False
+
+    monkeypatch.undo()
+    store.create_account("senha-local")
+    assert store.vault.file_path.exists() is True
+
+
 def test_remote_store_sends_bearer_and_exposes_collection_crud(monkeypatch):
     calls = []
 

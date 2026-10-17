@@ -21,46 +21,116 @@ O projeto foi desenvolvido com foco em:
 
 ```text
 InfoStorage/
-├── .gitattributes
-├── .gitignore
-├── LICENSE
-├── pyproject.toml
-├── requirements.txt
-│
-├── android/
-│
-└── python/
-    ├── README.txt
-    │
-    ├── info_storage/
-    │   ├── __init__.py
-    │   │
-    │   ├── security/
-    │   │   ├── __init__.py
-    │   │   ├── argon2.py
-    │   │   ├── fernet.py
-    │   │   └── keys.py
-    │   │
-    │   ├── storage/
-    │   │   ├── __init__.py
-    │   │   ├── dat.py
-    │   │   ├── json.py
-    │   │   └── storage.py
-    │   │
-    │   └── vault/
-    │       ├── __init__.py
-    │       ├── exceptions.py
-    │       ├── format.py
-    │       ├── integrity.py
-    │       ├── timer.py
-    │       └── vault.py
-    │
-    └── tests/
-        ├── integration/
-        └── unit/
-            ├── test_keys.py
-            ├── test_storage.py
-            └── test_vault.py
+C:.
+│   LICENSE
+│   Makefile
+│   pyproject.toml
+│   README.md
+│   requirements.txt
+│   
+├───android/
+│   
+├───docs
+│       security.md
+│       storage.md
+│       vault.md
+│       web-api.md
+│       
+├───python
+│   │   README.txt
+│   │   
+│   ├───info_storage
+│   │   │   mobile_api.py
+│   │   │   __init__.py
+│   │   │   __main__.py
+│   │   │   
+│   │   ├───auth
+│   │   │       authenticator.py
+│   │   │       credentials.py
+│   │   │       exceptions.py
+│   │   │       __init__.py
+│   │   │       
+│   │   ├───desktop
+│   │   │       api_client.py
+│   │   │       app.py
+│   │   │       storage.py
+│   │   │       __init__.py
+│   │   │       __main__.py
+│   │   │       
+│   │   ├───main
+│   │   │       app.py
+│   │   │       __init__.py
+│   │   │       
+│   │   ├───security
+│   │   │       argon2.py
+│   │   │       fernet.py
+│   │   │       keys.py
+│   │   │       __init__.py
+│   │   │       
+│   │   ├───storage
+│   │   │       dat.py
+│   │   │       json.py
+│   │   │       storage.py
+│   │   │       __init__.py
+│   │   │       
+│   │   ├───vault
+│   │   │       exceptions.py
+│   │   │       format.py
+│   │   │       integrity.py
+│   │   │       timer.py
+│   │   │       vault.py
+│   │   │       vault_backend.py
+│   │   │       __init__.py
+│   │   │       
+│   │   └───web
+│   │       │   config.py
+│   │       │   main.py
+│   │       │   schemas.py
+│   │       │   sessions.py
+│   │       │   storage.py
+│   │       │   __init__.py
+│   │       │   __main__.py
+│   │       │   
+│   │       └───routes
+│   │               auth.py
+│   │               credentials.py
+│   │               notes.py
+│   │               vault.py
+│   │               __init__.py
+│   │               
+│   └───tests
+│       ├───integration
+│       │       .gitkeep
+│       │       
+│       └───unit
+│               test_app.py
+│               test_auth.py
+│               test_credentials.py
+│               test_desktop.py
+│               test_keys.py
+│               test_mobile_api.py
+│               test_storage.py
+│               test_vault.py
+│               test_web_api.py
+│               
+└───web_frontend
+    │   api_client.py
+    │   app.py
+    │   sessions.py
+    │   __init__.py
+    │   __main__.py
+    │   
+    ├───static
+    │       style.css
+    │       
+    ├───templates
+    │       auth.html
+    │       base.html
+    │       dashboard.html
+    │       
+    └───tests
+            test_app.py
+            __init__.py
 ```
 
 ## Arquitetura

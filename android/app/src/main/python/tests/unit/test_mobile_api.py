@@ -18,3 +18,20 @@ def test_load_integrity_failure_requires_login(tmp_path):
     assert app.authenticator.authenticated is False
     assert app.vault.unlocked is False
     assert app.authenticator.security.unlocked is False
+
+
+def test_successful_create_and_login_keep_vault_unlocked(tmp_path):
+    app = InfoStorageApp(str(tmp_path))
+    app.register_json("123456")
+
+    created = json.loads(app.create_vault_json("123456"))
+    assert created["success"] is True
+    assert app.vault.unlocked is True
+    assert json.loads(app.load_data_json())["success"] is True
+
+    app.logout_json()
+    login = json.loads(app.login_json("123456"))
+
+    assert login["success"] is True
+    assert app.vault.unlocked is True
+    assert json.loads(app.load_data_json())["success"] is True

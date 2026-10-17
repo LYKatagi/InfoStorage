@@ -135,6 +135,10 @@ fun InfoStorageScreen(bridge: PythonBridge) {
     fun saveVaultData(data: String): String =
         if (syncMode) bridge.syncSaveData(apiUrl, data) else bridge.saveData(data)
 
+    fun deleteVaultItem(collection: String, itemId: String, localData: String): String =
+        if (syncMode) bridge.syncDeleteItem(apiUrl, collection, itemId)
+        else bridge.saveData(localData)
+
     fun applyVaultData(result: JSONObject) {
         result.optJSONObject("data")?.let { data ->
             val contents = parseVaultContents(data)
@@ -481,7 +485,7 @@ nArr.put(JSONObject().apply { put("id", n.id); put("title", n.title); put("conte
 }
 put("notes", nArr)
 }
-runAction({ saveVaultData(root.toString()) }, ::applyVaultData)
+runAction({ deleteVaultItem("credentials", item.id, root.toString()) }, ::applyVaultData)
 }) {
 Text("Remover", color = Error, fontSize = 12.sp)
 }
@@ -529,7 +533,7 @@ nArr.put(JSONObject().apply { put("id", n.id); put("title", n.title); put("conte
 }
 put("notes", nArr)
 }
-runAction({ saveVaultData(root.toString()) }, ::applyVaultData)
+runAction({ deleteVaultItem("notes", note.id, root.toString()) }, ::applyVaultData)
 }) {
 Text("Remover", color = Error, fontSize = 12.sp)
 }

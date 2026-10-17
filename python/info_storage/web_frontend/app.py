@@ -17,10 +17,12 @@ from flask import (
     request,
     session,
     url_for,
+    
 )
-
-from web_frontend.api_client import APIError, InfoStorageAPI
-from web_frontend.sessions import FrontendSessionStore
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from info_storage.web_frontend.api_client import APIError, InfoStorageAPI
+from info_storage.web_frontend.sessions import FrontendSessionStore
 
 
 def create_app(
@@ -32,6 +34,7 @@ def create_app(
     app.secret_key = (
         secret_key or os.getenv("INFOSTORAGE_FLASK_SECRET") or secrets.token_hex(32)
     )
+    
     app.config.update(
         API_URL=api_url or os.getenv("INFOSTORAGE_API_URL", "http://127.0.0.1:8000"),
         SESSION_COOKIE_HTTPONLY=True,
@@ -40,7 +43,7 @@ def create_app(
         PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
     )
     app.extensions["web_sessions"] = session_store or FrontendSessionStore()
-
+    limiter = Limiter(get_remote_address, app=app, storage_uri="memory://")
     def api() -> InfoStorageAPI:
         return InfoStorageAPI(app.config["API_URL"])
 
@@ -110,6 +113,7 @@ def create_app(
         return redirect(url_for("login"))
 
     @app.route("/login", methods=["GET", "POST"])
+    @limiter.limit("3 per day")
     def login():
         if request.method == "POST":
             username = request.form.get("username", "").strip()
@@ -136,6 +140,7 @@ def create_app(
         return render_template("auth.html", mode="login")
 
     @app.route("/register", methods=["GET", "POST"])
+    @limiter.limit("3 per minute")
     def register():
         if request.method == "POST":
             username = request.form.get("username", "").strip()

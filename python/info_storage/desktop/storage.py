@@ -1,6 +1,7 @@
 import hashlib
 import json
 import uuid
+from contextlib import suppress
 from pathlib import Path
 from typing import Literal
 
@@ -33,6 +34,8 @@ class LocalVaultStore:
             self.vault.lock()
             if self.authenticator.authenticated:
                 self.authenticator.logout()
+            with suppress(OSError):
+                self.authenticator.credentials.file_path.unlink(missing_ok=True)
             raise
         return EMPTY_VAULT.copy()
 

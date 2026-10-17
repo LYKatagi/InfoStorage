@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, status
-
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from info_storage.web.schemas import AuthRequest, MessageResponse, SessionResponse
 from info_storage.web.sessions import (
     SessionDependency,
@@ -11,11 +13,11 @@ from info_storage.web.storage import (
 )
 
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
-
-
+limiter = Limiter(get_remote_address)
 @router.post(
     "/register", response_model=SessionResponse, status_code=status.HTTP_201_CREATED
 )
+
 def register(body: AuthRequest, request: Request) -> SessionResponse:
     store = request.app.state.account_store
     try:

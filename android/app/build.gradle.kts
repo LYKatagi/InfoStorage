@@ -9,11 +9,22 @@ plugins {
 
 android {
     namespace = "com.luiz.infostorage"
+    packaging {
+        resources {
+            // Força a compressão máxima de arquivos de texto e configurações internas
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+   
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
+        ndk {
+            abiFilters.addAll(setOf("x86_64", "arm64-v8a"))
+        }
+        
         applicationId = "com.luiz.infostorage"
         minSdk = 24
         targetSdk = 37
@@ -22,9 +33,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            abiFilters.addAll(setOf("arm64-v8a", "x86_64"))
-        }
+        
 
         
     }
@@ -56,9 +65,15 @@ chaquopy {
     defaultConfig {
         version = "3.13"
         buildPython("uv", "run", "--no-project", "--python", "3.13", "python")
+       
+        
         pip {
             install("argon2-cffi")
             install("cryptography")
+        }
+        pyc {
+            src = true
+            pip = true
         }
     }
 }

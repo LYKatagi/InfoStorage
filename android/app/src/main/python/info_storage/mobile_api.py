@@ -1,6 +1,5 @@
 """JSON adapter used by the Android application through PythonBridge."""
 
-import gc
 import json
 from pathlib import Path
 
@@ -54,15 +53,10 @@ class InfoStorageApp:
             self.vault.create(password, json.dumps(initial_vault, ensure_ascii=False))
             return self._result(True, "Cofre criado com sucesso.", data=initial_vault)
         except Exception as error:
+            self._clear_session()
             return self._result(False, str(error))
-        finally:
-            self._clear_session()  # Garante limpeza absoluta mesmo após tentar criar/abrir
 
     def login_json(self, password: str) -> str:
-        # Criamos referências mutáveis locais para poder rastrear e zerar fisicamente
-        hash_mestre = None
-        chave_fernet = None
-        chave_hmac = None
         try:
             self.authenticator.authenticate(password)
             if not self.vault_path.exists():
@@ -72,37 +66,16 @@ class InfoStorageApp:
                     needs_vault=True,
                 )
 
-            # --- BLINDAGEM DE MEMÓRIA (KEY SPLITTING COM BYTEARRAY) ---
-            # Se o seu SecurityManager retornar bytes comuns, nós os convertemos
-            # imediatamente em um bytearray mutável para gerenciamento controlado.
-            if (
-                hasattr(self.authenticator.security, "key")
-                and self.authenticator.security.key
-            ):
-                hash_mestre = bytearray(self.authenticator.security.key)
-                # Exemplo de divisão segura na RAM se o hash tiver tamanho estendido:
-                if len(hash_mestre) >= 64:
-                    chave_fernet = hash_mestre[:32]
-                    chave_hmac = hash_mestre[32:64]
-
             data = self.vault.unlock(password)
             return self._result(
                 True, "Cofre desbloqueado.", data=self._decode_records(data)
             )
         except (InvalidCredentialsError, ValueError, TypeError) as error:
+            self._clear_session()
             return self._result(False, str(error))
         except Exception as error:
-            return self._result(False, str(error))
-        finally:
-            # Saturação de memória física: sobrescreve os arrays com zeros na RAM antes do descarte
-            for arr in [hash_mestre, chave_fernet, chave_hmac]:
-                if isinstance(arr, bytearray):
-                    for i in range(len(arr)):
-                        arr[i] = 0  # Substitui o segredo por zeros binários
-
-            # Limpa referências locais
-            del hash_mestre, chave_fernet, chave_hmac
             self._clear_session()
+            return self._result(False, str(error))
 
     def load_data_json(self) -> str:
         try:
@@ -184,17 +157,7 @@ class InfoStorageApp:
         return records
 
     def _clear_session(self) -> None:
-        """Tranca o cofre e expurga ativamente os resíduos de chaves remanescentes na RAM."""
-        # Se houver chaves armazenadas no gerenciador de segurança interno, limpamos de forma mutável se possível
-        if hasattr(self.authenticator.security, "key") and isinstance(
-            self.authenticator.security.key, bytearray
-        ):
-            for i in range(len(self.authenticator.security.key)):
-                self.authenticator.security.key[i] = 0
-
+        """Lock the vault and discard the active authentication state."""
         self.vault.lock()
         if self.authenticator.authenticated:
             self.authenticator.logout()
-
-        # Força o coletor do Python a passar varrendo todas as referências perdidas imediatamente
-        gc.collect()

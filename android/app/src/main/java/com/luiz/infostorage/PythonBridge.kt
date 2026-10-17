@@ -129,24 +129,29 @@ class PythonBridge(
         val token = requireApiToken()
         val requested = JSONObject(dataJson)
         val remote = fetchRemoteData(apiUrl, token)
-        val credentials = syncCollection(
+        syncCollection(
             apiUrl,
             token,
             "credentials",
             requested.optJSONArray("credentials") ?: JSONArray(),
             remote.optJSONArray("credentials") ?: JSONArray(),
         )
-        val notes = syncCollection(
+        syncCollection(
             apiUrl,
             token,
             "notes",
             requested.optJSONArray("notes") ?: JSONArray(),
             remote.optJSONArray("notes") ?: JSONArray(),
         )
-        successResult(
-            "Alterações sincronizadas.",
-            JSONObject().put("credentials", credentials).put("notes", notes),
-        )
+        successResult("Alterações sincronizadas.", fetchRemoteData(apiUrl, token))
+    }
+
+    fun syncDeleteItem(apiUrl: String, collection: String, itemId: String): String = apiResult {
+        require(collection == "credentials" || collection == "notes")
+        require(itemId.isNotBlank())
+        val token = requireApiToken()
+        apiRequest(apiUrl, "/api/v1/$collection/$itemId", "DELETE", token)
+        successResult("Item removido.", fetchRemoteData(apiUrl, token))
     }
 
     fun syncLogout(apiUrl: String): String {
@@ -201,36 +206,21 @@ class PythonBridge(
         collection: String,
         requested: JSONArray,
         remote: JSONArray,
-    ): JSONArray {
+    ) {
         val remoteItems = (0 until remote.length()).map { remote.getJSONObject(it) }
         val remoteById = remoteItems.associateBy { it.getString("id") }
-        val retainedRemoteIds = mutableSetOf<String>()
-        val synced = JSONArray()
 
         for (index in 0 until requested.length()) {
             val item = requested.getJSONObject(index)
             val itemId = item.optString("id")
             val payload = JSONObject(item.toString()).apply { remove("id") }
             val response = if (remoteById.containsKey(itemId)) {
-                retainedRemoteIds.add(itemId)
                 apiRequest(apiUrl, "/api/v1/$collection/$itemId", "PUT", token, payload)
             } else {
                 apiRequest(apiUrl, "/api/v1/$collection", "POST", token, payload)
             }
-            synced.put(response.getJSONObject("data"))
+            response.getJSONObject("data")
         }
-
-        for (item in remoteItems) {
-            val remoteId = item.getString("id")
-            if (remoteId !in retainedRemoteIds &&
-                (0 until requested.length()).none {
-                    requested.getJSONObject(it).optString("id") == remoteId
-                }
-            ) {
-                apiRequest(apiUrl, "/api/v1/$collection/$remoteId", "DELETE", token)
-            }
-        }
-        return synced
     }
 
     private fun apiRequest(

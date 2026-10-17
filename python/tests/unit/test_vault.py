@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from info_storage.vault.exceptions import (
@@ -255,6 +257,46 @@ def test_save_updates_integrity(tmp_path):
     data = vault.unlock("123456")
 
     assert data == "dados novos"
+
+
+def test_failed_atomic_replace_preserves_previous_vault(tmp_path, monkeypatch):
+    vault_path = tmp_path / "vault.dat"
+    vault = Vault(vault_path)
+    vault.create("123456", "dados originais")
+    original_content = vault_path.read_bytes()
+
+    def fail_replace(source, destination):
+        raise OSError("falha simulada durante gravação")
+
+    monkeypatch.setattr(os, "replace", fail_replace)
+
+    with pytest.raises(OSError, match="falha simulada"):
+        vault.save("dados novos")
+
+    assert vault_path.read_bytes() == original_content
+    assert list(tmp_path.glob(".vault.dat.*.tmp")) == []
+
+    monkeypatch.undo()
+    vault.lock()
+    assert vault.unlock("123456") == "dados originais"
+
+
+def test_failed_atomic_create_locks_security_and_leaves_no_file(tmp_path, monkeypatch):
+    vault_path = tmp_path / "vault.dat"
+
+    def fail_replace(source, destination):
+        raise OSError("falha simulada durante criação")
+
+    monkeypatch.setattr("os.replace", fail_replace)
+    vault = Vault(vault_path)
+
+    with pytest.raises(OSError, match="falha simulada"):
+        vault.create("123456", "dados secretos")
+
+    assert vault.unlocked is False
+    assert vault.security.unlocked is False
+    assert vault_path.exists() is False
+    assert list(tmp_path.glob(".vault.dat.*.tmp")) == []
 
 
 def test_timeout_locks_vault(tmp_path):

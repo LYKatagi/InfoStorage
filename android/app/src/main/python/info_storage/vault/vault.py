@@ -1,4 +1,6 @@
 import binascii
+import os
+import tempfile
 from pathlib import Path
 
 from info_storage.security.keys import SecurityManager
@@ -37,15 +39,15 @@ class Vault:
 
         self.file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        salt = self.security.setup(password)
-
-        encrypted_data = self.security.encrypt(data)
-
-        backend = VaultBackend(self.security.key)
-
-        content = backend.build(salt, encrypted_data)
-
-        self.file_path.write_bytes(content)
+        try:
+            salt = self.security.setup(password)
+            encrypted_data = self.security.encrypt(data)
+            backend = VaultBackend(self.security.key)
+            content = backend.build(salt, encrypted_data)
+            self._write_atomically(content)
+        except Exception:
+            self.lock()
+            raise
 
         self.unlocked = True
         self.timer.start()
@@ -112,7 +114,7 @@ class Vault:
 
         content = backend.build(self.security.salt, encrypted_data)
 
-        self.file_path.write_bytes(content)
+        self._write_atomically(content)
 
         self.timer.reset()
 
@@ -162,3 +164,23 @@ class Vault:
 
         if not self.unlocked:
             raise VaultLockedError("O cofre está bloqueado.")
+
+    def _write_atomically(self, content: bytes) -> None:
+        temporary_path = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="wb",
+                dir=self.file_path.parent,
+                prefix=f".{self.file_path.name}.",
+                suffix=".tmp",
+                delete=False,
+            ) as temporary_file:
+                temporary_path = Path(temporary_file.name)
+                temporary_file.write(content)
+                temporary_file.flush()
+                os.fsync(temporary_file.fileno())
+            os.replace(temporary_path, self.file_path)
+        except BaseException:
+            if temporary_path is not None:
+                temporary_path.unlink(missing_ok=True)
+            raise
