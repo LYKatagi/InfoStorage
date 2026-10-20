@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "InfoStorage Password Generator",
+  "version": "1.0.0",
+  "description": "Gera senhas seguras pela API do InfoStorage.",
+  "action": {
+    "default_title": "InfoStorage",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage", "clipboardWrite", "activeTab", "scripting"],
+  "background": { "service_worker": "background.js" },
+  "optional_host_permissions": ["http://*/*", "https://*/*"]
+}

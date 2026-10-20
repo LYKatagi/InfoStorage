@@ -98,7 +98,7 @@ def get_current_session(
     if credentials is None or credentials.scheme.casefold() != "bearer":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Autenticação necessária.",
+            detail="Tá tentando entrar sem autenticação em, estranho em 😒",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -110,14 +110,14 @@ def get_current_session(
     except SessionExpiredError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Sessão inválida ou expirada. Faça login novamente.",
+            detail="Eu acho que você não foi pelo site real em, to de olho, ou se vc é um dev, blz. Faça login novamente.",
             headers={"WWW-Authenticate": "Bearer"},
         ) from None
     except Exception as error:
         manager.revoke(session)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Cofre bloqueado. Faça login novamente.",
+            detail="Vixi, o cofre ficou bloqueado, não fica bravo não, é só pros hackers não pegarem seu histórico no chat gpt. Faça login novamente.",
             headers={"WWW-Authenticate": "Bearer"},
         ) from error
 

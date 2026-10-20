@@ -20,6 +20,45 @@ class InfoStorageApp:
         return json.dumps(
             {"success": success, "message": message, **extra}, ensure_ascii=False
         )
+        # ... adicione este método dentro da classe InfoStorageApp no mobile_api.py
+
+    def generate_secure_password(self, length: int = 16, use_uppercase: bool = True, 
+                                 use_numbers: bool = True, use_symbols: bool = True) -> str:
+        """Gera uma senha aleatória de alta entropia usando o módulo secrets do Python."""
+        import secrets
+        import string
+
+        # Base obrigatória: letras minúsculas
+        chars = string.ascii_lowercase
+        
+        if use_uppercase:
+            chars += string.ascii_uppercase
+        if use_numbers:
+            chars += string.digits
+        if use_symbols:
+            # Símbolos seguros comuns para formulários web
+            chars += "!@#$%^&*()-_=+[]{}|;:,."
+
+        try:
+            # Garante que pelo menos um caractere de cada grupo selecionado esteja na senha
+            # para evitar senhas geradas aleatoriamente que falham em validações de sites
+            password = []
+            if use_uppercase: password.append(secrets.choice(string.ascii_uppercase))
+            if use_numbers: password.append(secrets.choice(string.digits))
+            if use_symbols: password.append(secrets.choice("!@#$%^&*()-_=+[]{}|;:,."))
+            
+            # Preenche o restante do tamanho solicitado
+            remaining_length = length - len(password)
+            if remaining_length < 0:
+                password.extend([secrets.choice(chars) for _ in range(remaining_length)])
+            
+            # Embaralha a lista para que os caracteres obrigatórios não fiquem sempre no início
+            secrets.SystemRandom().shuffle(password)
+            
+            generated_str = "".join(password)
+            return self._result(True, "Senha gerada com sucesso.", password=generated_str)
+        except Exception as error:
+            return self._result(False, f"Erro ao gerar senha: {str(error)}")
 
     def get_status_json(self) -> str:
         return self._result(

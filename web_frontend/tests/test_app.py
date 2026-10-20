@@ -1,6 +1,6 @@
 import re
 
-from python.info_storage.web_frontend.app import create_app
+from web_frontend.app import create_app
 
 
 class FakeAPI:

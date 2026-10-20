@@ -95,4 +95,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    // Activity Result integration in MainActivity requires Fragment 1.3.0 or newer.
+    implementation("androidx.fragment:fragment-ktx:1.8.9")
 }

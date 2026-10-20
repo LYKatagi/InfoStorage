@@ -21,8 +21,8 @@ from flask import (
 )
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from info_storage.web_frontend.api_client import APIError, InfoStorageAPI
-from info_storage.web_frontend.sessions import FrontendSessionStore
+from web_frontend.api_client import APIError, InfoStorageAPI
+from web_frontend.sessions import FrontendSessionStore
 
 
 def create_app(

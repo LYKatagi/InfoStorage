@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>InfoStorage</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="mark" aria-hidden="true">IS</div>
+        <div><p class="eyebrow">INFOSTORAGE</p><h1>Gerador de senhas</h1></div>
+      </header>
+
+      <section id="login-panel" class="panel">
+        <h2>Conectar à API</h2>
+        <form id="login-form">
+          <label for="api-url">Endereço da API</label>
+          <input id="api-url" name="api-url" type="url" value="http://127.0.0.1:8000" required />
+          <label for="username">Usuário</label>
+          <input id="username" name="username" autocomplete="username" required />
+          <label for="master-password">Senha mestra</label>
+          <input id="master-password" name="password" type="password" autocomplete="current-password" required />
+          <button class="primary" type="submit">Entrar</button>
+        </form>
+      </section>
+
+      <section id="generator-panel" class="panel" hidden>
+        <div class="connected-row"><span id="connected-user"></span><button id="logout" class="text-button" type="button">Sair</button></div>
+        <form id="generator-form">
+          <label class="length-label" for="length">Comprimento <output id="length-value">20</output></label>
+          <input id="length" type="range" min="8" max="128" value="20" />
+          <fieldset>
+            <legend>Incluir caracteres</legend>
+            <label class="check"><input id="lowercase" type="checkbox" checked /> Minúsculas</label>
+            <label class="check"><input id="uppercase" type="checkbox" checked /> Maiúsculas</label>
+            <label class="check"><input id="digits" type="checkbox" checked /> Números</label>
+            <label class="check"><input id="symbols" type="checkbox" checked /> Símbolos</label>
+          </fieldset>
+          <button class="primary" type="submit">Gerar senha</button>
+        </form>
+        <div id="result-box" class="result-box" hidden>
+          <code id="password-result"></code>
+          <button id="copy-password" class="copy-button" type="button" aria-label="Copiar senha">Copiar</button>
+        </div>
+        <section id="page-tools" class="page-tools" hidden>
+          <div class="page-heading"><div><p class="eyebrow">ABA ATUAL</p><h2 id="page-title">Página de login</h2></div><span id="page-badge" class="badge">Login</span></div>
+          <p id="page-origin" class="origin"></p>
+          <div class="site-watch">
+            <div><strong id="watch-title">Detecção desligada</strong><p id="watch-description">Ative para detectar formulários neste site.</p></div>
+            <button id="enable-site-watch" class="secondary" type="button">Ativar neste site</button>
+            <button id="disable-site-watch" class="text-button" type="button" hidden>Desativar</button>
+          </div>
+          <div id="pending-save" class="pending-save" hidden>
+            <strong>Login enviado nesta página</strong>
+            <span id="pending-username"></span>
+            <div class="button-row"><button id="save-pending" class="primary" type="button">Salvar no InfoStorage</button><button id="discard-pending" class="text-button" type="button">Agora não</button></div>
+          </div>
+          <div id="login-actions" hidden>
+          <label for="saved-credential">Credencial salva</label>
+          <select id="saved-credential"><option value="">Carregando credenciais…</option></select>
+          <button id="fill-login" class="secondary" type="button">Preencher e entrar</button>
+          <button id="save-current" class="secondary" type="button">Salvar dados preenchidos</button>
+          <p class="hint">Preencher e entrar envia o formulário da página depois do seu clique.</p>
+          </div>
+        </section>
+      </section>
+      <p id="status" role="status" aria-live="polite"></p>
+      <p class="footnote">A senha é gerada pela API e não fica salva no cofre.</p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

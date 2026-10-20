@@ -191,6 +191,17 @@ class PythonBridge(
             throw error
         }
     }
+    
+
+fun generateSecurePassword(length: Int, useUppercase: Boolean, useNumbers: Boolean, useSymbols: Boolean): String {
+    return app.callAttr(
+        "generate_secure_password", 
+        length, 
+        useUppercase, 
+        useNumbers, 
+        useSymbols
+    ).toString()
+}
 
     private fun fetchRemoteData(apiUrl: String, token: String): JSONObject {
         val credentials = apiRequest(apiUrl, "/api/v1/credentials", "GET", token)

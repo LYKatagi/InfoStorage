@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 from info_storage.vault.exceptions import VaultError, VaultLockedError
 from info_storage.web.config import Settings
-from info_storage.web.routes import auth, credentials, notes, vault
+from info_storage.web.routes import auth, credentials, notes, passwords, vault
 from info_storage.web.sessions import SessionManager
 from info_storage.web.storage import AccountStore, InvalidVaultDataError
 
@@ -15,7 +15,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title="InfoStorage API",
-        description="API autenticada para credenciais e notas protegidas pelo vault InfoStorage.",
+        description="API autenticada para credenciais e notas protegidas pelo vault InfoStorage. e um toquinho de humor",
         version="1.0.0",
     )
     app.state.settings = settings
@@ -27,6 +27,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(auth.router, prefix="/api/v1")
     app.include_router(credentials.router, prefix="/api/v1")
     app.include_router(notes.router, prefix="/api/v1")
+    app.include_router(passwords.router, prefix="/api/v1")
     app.include_router(vault.router, prefix="/api/v1")
 
     @app.middleware("http")
@@ -46,11 +47,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             return JSONResponse(
                 status_code=401,
                 headers={"WWW-Authenticate": "Bearer", "Cache-Control": "no-store"},
-                content={"detail": "Cofre bloqueado. Faça login novamente."},
+                content={"detail": "Cofre bloqueado pq tu demorou demais. Faça login novamente."},
             )
         return JSONResponse(
             status_code=422,
-            content={"detail": "O cofre está inválido ou sua integridade falhou."},
+            content={"detail": "O cofre está inválido ou sua integridade falhou. seu dados foram perdidos, YEY!!!"},
         )
 
     @app.exception_handler(InvalidVaultDataError)
@@ -60,7 +61,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             app.state.sessions.revoke(session)
         return JSONResponse(
             status_code=422,
-            content={"detail": "Os dados do cofre estão inválidos."},
+            content={"detail": "Os dados do cofre estão inválidos, puts, vc lembra suas senhas?"},
         )
 
     @app.get("/health", tags=["Sistema"])

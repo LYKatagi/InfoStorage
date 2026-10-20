@@ -61,6 +61,9 @@ Todas as rotas abaixo, exceto saúde e autenticação, exigem sessão válida:
 | GET/PUT/DELETE | `/api/v1/notes/{id}` | Consulta, atualiza ou remove nota |
 | GET | `/api/v1/vault/summary` | Resume quantidades do cofre da sessão |
 | GET | `/api/v1/search?q=termo` | Busca autenticada sem retornar senhas |
+| POST | `/api/v1/passwords/generate` | Gera uma senha segura com a sessão autenticada |
+
+O gerador recebe um JSON opcional como `{"length": 24, "lowercase": true, "uppercase": true, "digits": true, "symbols": true}`. O comprimento aceito vai de 8 a 128 caracteres; pelo menos um grupo deve estar habilitado. A senha é produzida com `secrets` do Python e não é gravada no cofre. A extensão Chromium em `web-extension/` usa essa rota.
 
 Credenciais usam `title`, `username`, `password` e `notes`. Notas usam `title` e `content`. Segredos só são retornados em rotas autenticadas; as respostas recebem `Cache-Control: no-store`.
 

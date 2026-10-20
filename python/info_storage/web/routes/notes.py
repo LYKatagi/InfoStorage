@@ -36,7 +36,7 @@ def get_note(
     with session.lock:
         item = request.app.state.account_store.get_item(session, "notes", note_id)
     if item is None:
-        raise HTTPException(status_code=404, detail="Nota não encontrada.")
+        raise HTTPException(status_code=404, detail="Nota não encontrada. num lembra o que tem hoje?")
     return item
 
 
@@ -52,7 +52,7 @@ def update_note(
             session, "notes", note_id, body.model_dump()
         )
     if item is None:
-        raise HTTPException(status_code=404, detail="Nota não encontrada.")
+        raise HTTPException(status_code=404, detail="Nota não encontrada, puts, ESCREVE DIREITO O ID")
     return item
 
 
@@ -65,5 +65,5 @@ def delete_note(
     with session.lock:
         deleted = request.app.state.account_store.delete_item(session, "notes", note_id)
     if not deleted:
-        raise HTTPException(status_code=404, detail="Nota não encontrada.")
+        raise HTTPException(status_code=404, detail="Nota não encontrada, eu já estou cansado")
     return Response(status_code=status.HTTP_204_NO_CONTENT)

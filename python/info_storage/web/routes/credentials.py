@@ -38,7 +38,7 @@ def get_credential(
             session, "credentials", credential_id
         )
     if item is None:
-        raise HTTPException(status_code=404, detail="Credencial não encontrada.")
+        raise HTTPException(status_code=404, detail="Credencial não encontrada, digita direito man")
     return item
 
 
@@ -54,7 +54,7 @@ def update_credential(
             session, "credentials", credential_id, body.model_dump()
         )
     if item is None:
-        raise HTTPException(status_code=404, detail="Credencial não encontrada.")
+        raise HTTPException(status_code=404, detail="Credencial não encontrada. digita direito man")
     return item
 
 
@@ -69,5 +69,5 @@ def delete_credential(
             session, "credentials", credential_id
         )
     if not deleted:
-        raise HTTPException(status_code=404, detail="Credencial não encontrada.")
+        raise HTTPException(status_code=404, detail="Credencial não encontrada. digita direito man")
     return Response(status_code=status.HTTP_204_NO_CONTENT)

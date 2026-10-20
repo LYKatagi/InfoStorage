@@ -32,7 +32,7 @@ def search_vault(
 ) -> list[dict[str, str | list[str]]]:
     query = q.casefold().strip()
     if len(query) < 2:
-        raise HTTPException(status_code=422, detail="Informe ao menos dois caracteres.")
+        raise HTTPException(status_code=422, detail="Informe ao menos dois caracteres, difícil em")
     collections = ("credentials", "notes") if collection == "all" else (collection,)
 
     matches = []

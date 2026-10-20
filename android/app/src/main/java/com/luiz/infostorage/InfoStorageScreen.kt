@@ -2,6 +2,7 @@ package com.luiz.infostorage
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,7 +49,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -169,41 +169,43 @@ fun InfoStorageScreen(bridge: PythonBridge) {
     ) {
         Spacer(Modifier.height(24.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-Surface(shape = RoundedCornerShape(17.dp), color = Green, modifier = Modifier.size(48.dp)) {
-Box(contentAlignment = Alignment.Center) {
-Text("IS", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 17.sp)
-}
-}
-Spacer(Modifier.width(12.dp))
-Column {
-Text("INFOSTORAGE", color = Ink, fontSize = 14.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.6.sp)
-Text("Seu cofre, só seu.", color = Muted, fontSize = 12.sp)
-}
-Spacer(Modifier.weight(1f))
-if (unlocked) {
-Surface(color = Color(0xFFE1F1E8), shape = CircleShape) {
-Text("●  PROTEGIDO", color = Green, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 11.dp, vertical = 8.dp))
-}
-}
-}
-Spacer(Modifier.height(32.dp))
-if (accountExists == null) {
-Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-CircularProgressIndicator(color = Green)
-}
-} else if (!unlocked) {
-Row(modifier = Modifier.fillMaxWidth().padding(bottom = 22.dp)) {
-Button(
-onClick = { syncMode = false; password = ""; confirmPassword = ""; notice = null },
-modifier = Modifier.weight(1f).height(42.dp),
-shape = RoundedCornerShape(10.dp),
-colors = ButtonDefaults.buttonColors(containerColor = if (!syncMode) Green else Color.Transparent),
-) {
-Text("Somente local", color = if (!syncMode) Color.White else Ink, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-}
-Button(
-onClick = { syncMode = true; password = ""; confirmPassword = ""; notice = null },
-modifier = Modifier.weight(1f).height(42.dp),
+            Surface(shape = RoundedCornerShape(17.dp), color = Green, modifier = Modifier.size(48.dp)) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text("IS", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                }
+            }
+            Spacer(Modifier.width(12.dp))
+            Column {
+                Text("INFOSTORAGE", color = Ink, fontSize = 14.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.6.sp)
+                Text("Seu cofre, só seu.", color = Muted, fontSize = 12.sp)
+            }
+            Spacer(Modifier.weight(1f))
+            if (unlocked) {
+                Surface(color = Color(0xFFE1F1E8), shape = CircleShape) {
+                    Text("●  PROTEGIDO", color = Green, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 11.dp, vertical = 8.dp))
+                }
+            }
+        }
+
+        Spacer(Modifier.height(32.dp))
+
+        if (accountExists == null) {
+            Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Green)
+            }
+        } else if (!unlocked) {
+            Row(modifier = Modifier.fillMaxWidth().padding(bottom = 22.dp)) {
+                Button(
+                    onClick = { syncMode = false; password = ""; confirmPassword = ""; notice = null },
+                    modifier = Modifier.weight(1f).height(42.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (!syncMode) Green else Color.Transparent),
+                ) {
+                    Text("Somente local", color = if (!syncMode) Color.White else Ink, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                }
+                Button(
+                    onClick = { syncMode = true; password = ""; confirmPassword = ""; notice = null },
+                    modifier = Modifier.weight(1f).height(42.dp),
 shape = RoundedCornerShape(10.dp),
 colors = ButtonDefaults.buttonColors(containerColor = if (syncMode) Green else Color.Transparent),
 ) {
@@ -216,10 +218,10 @@ Text(screenTitle, color = Ink, fontSize = 26.sp, fontWeight = FontWeight.Bold)
 Spacer(Modifier.height(8.dp))
 Text(
 when {
-    syncMode && createApiAccount -> "Crie uma conta para manter o cofre sincronizado com a API."
-    syncMode -> "Entre na conta remota para carregar seus dados sincronizados."
-    createAccount -> "Crie uma senha forte para encriptar suas informações."
-    else -> "Insira sua senha mestra para abrir o cofre."
+syncMode && createApiAccount -> "Crie uma conta para manter o cofre sincronizado com a API."
+syncMode -> "Entre na conta remota para carregar seus dados sincronizados."
+createAccount -> "Crie uma senha forte para encriptar suas informações."
+else -> "Insira sua senha mestra para abrir o cofre."
 },
 color = Muted, fontSize = 14.sp
 )
@@ -325,17 +327,17 @@ modifier = Modifier.fillMaxWidth().height(48.dp),
 colors = ButtonDefaults.buttonColors(containerColor = Green),
 shape = RoundedCornerShape(12.dp),
 enabled = !busy && password.isNotEmpty() &&
-    (!syncMode || apiUsername.isNotBlank()) &&
-    (!createAccount || confirmPassword.isNotEmpty())
+(!syncMode || apiUsername.isNotBlank()) &&
+(!createAccount || confirmPassword.isNotEmpty())
 ) {
 if (busy) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
 else Text(
 when {
-    syncMode && createApiAccount -> "Criar e sincronizar"
-    syncMode -> "Entrar e sincronizar"
-    createAccount -> "Criar espaço local"
-    !vaultExists -> "Criar cofre local"
-    else -> "Desbloquear local"
+syncMode && createApiAccount -> "Criar e sincronizar"
+syncMode -> "Entrar e sincronizar"
+createAccount -> "Criar espaço local"
+!vaultExists -> "Criar cofre local"
+else -> "Desbloquear local"
 },
 fontWeight = FontWeight.Bold,
 )
@@ -360,11 +362,11 @@ Text("Seu cofre", color = Ink, fontSize = 26.sp, fontWeight = FontWeight.Bold)
 Spacer(Modifier.height(8.dp))
 Text("Credenciais e anotações protegidas em um só lugar.", color = Muted, fontSize = 14.sp)
 Text(
-    if (syncMode) "Sincronizado com a API" else "Armazenado somente neste dispositivo",
-    color = Green,
-    fontSize = 12.sp,
-    fontWeight = FontWeight.SemiBold,
-    modifier = Modifier.padding(top = 6.dp),
+if (syncMode) "Sincronizado com a API" else "Armazenado somente neste dispositivo",
+color = Green,
+fontSize = 12.sp,
+fontWeight = FontWeight.SemiBold,
+modifier = Modifier.padding(top = 6.dp),
 )
 Spacer(Modifier.height(24.dp))
 // ABAS SELETORAS
@@ -473,19 +475,8 @@ Text("Editar", color = Green, fontSize = 12.sp)
 }
 TextButton(onClick = {
 val updated = records.filter { it.id != item.id }
-val root = JSONObject().apply {
-val cArr = JSONArray()
-updated.forEach { r ->
-cArr.put(JSONObject().apply { put("id", r.id); put("title", r.title); put("username", r.username); put("password", r.password); put("notes", r.notes) })
-}
-put("credentials", cArr)
-val nArr = JSONArray()
-vaultNotes.forEach { n ->
-nArr.put(JSONObject().apply { put("id", n.id); put("title", n.title); put("content", n.content) })
-}
-put("notes", nArr)
-}
-runAction({ deleteVaultItem("credentials", item.id, root.toString()) }, ::applyVaultData)
+val root = serializeVaultData(updated, vaultNotes)
+runAction({ deleteVaultItem("credentials", item.id, root) }, ::applyVaultData)
 }) {
 Text("Remover", color = Error, fontSize = 12.sp)
 }
@@ -495,7 +486,6 @@ Text("Remover", color = Error, fontSize = 12.sp)
 }
 }
 } else {
-// SEÇÃO NOTAS
 if (vaultNotes.isEmpty()) {
 Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(12.dp), border = BorderStroke(1.dp, Line)) {
 Text("Nenhuma anotação salva.", color = Muted, fontSize = 13.sp, modifier = Modifier.padding(24.dp).fillMaxWidth(), textAlign = TextAlign.Center)
@@ -521,19 +511,8 @@ Text(note.title, color = Ink, fontSize = 14.sp, fontWeight = FontWeight.Bold, ma
 }
 TextButton(onClick = {
 val updated = vaultNotes.filter { it.id != note.id }
-val root = JSONObject().apply {
-val cArr = JSONArray()
-records.forEach { r ->
-cArr.put(JSONObject().apply { put("id", r.id); put("title", r.title); put("username", r.username); put("password", r.password); put("notes", r.notes) })
-}
-put("credentials", cArr)
-val nArr = JSONArray()
-updated.forEach { n ->
-nArr.put(JSONObject().apply { put("id", n.id); put("title", n.title); put("content", n.content) })
-}
-put("notes", nArr)
-}
-runAction({ deleteVaultItem("notes", note.id, root.toString()) }, ::applyVaultData)
+val root = serializeVaultData(records, updated)
+runAction({ deleteVaultItem("notes", note.id, root) }, ::applyVaultData)
 }) {
 Text("Remover", color = Error, fontSize = 12.sp)
 }
@@ -571,8 +550,26 @@ OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text(
 Spacer(Modifier.height(12.dp))
 OutlinedTextField(value = username, onValueChange = { username = it }, label = { Text("Usuário / E-mail") }, modifier = Modifier.fillMaxWidth(), singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
 Spacer(Modifier.height(12.dp))
+// CAMPO SENHA + GERADOR DE SENHAS DO PYTHON VIA CHAQUOPY
+Column(modifier = Modifier.fillMaxWidth()) {
 OutlinedTextField(value = secret, onValueChange = { secret = it }, label = { Text("Senha") }, modifier = Modifier.fillMaxWidth(), singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password))
-Spacer(Modifier.height(12.dp))
+Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+TextButton(
+onClick = {
+runAction({ bridge.generateSecurePassword(16, true, true, true) }) { res ->
+val generated = res.optString("password")
+if (generated.isNotEmpty()) {
+secret = generated
+}
+}
+},
+contentPadding = PaddingValues(0.dp)
+) {
+Text("⚡ Gerar senha segura (Python)", color = Green, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+}
+}
+}
+Spacer(Modifier.height(4.dp))
 OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text("Anotações adicionais") }, modifier = Modifier.fillMaxWidth(), maxLines = 3)
 Spacer(Modifier.height(20.dp))
 Row {
@@ -591,23 +588,10 @@ onClick = {
 val targetId = editingRecordId ?: UUID.randomUUID().toString()
 val currentList = if (editingRecordId != null) records.filter { it.id != editingRecordId } else records
 val updatedList = currentList + VaultRecord(targetId, title, username, secret, notes)
-val root = JSONObject().apply {
-val cArr = JSONArray()
-updatedList.forEach { r ->
-cArr.put(JSONObject().apply { put("id", r.id); put("title", r.title); put("username", r.username); put("password", r.password); put("notes", r.notes) })
-}
-put("credentials", cArr)
-val nArr = JSONArray()
-vaultNotes.forEach { n ->
-nArr.put(JSONObject().apply { put("id", n.id); put("title", n.title); put("content", n.content) })
-}
-put("notes", nArr)
-}
-runAction({ saveVaultData(root.toString()) }) { result ->
-applyVaultData(result)
+val root = serializeVaultData(updatedList, vaultNotes)
+runAction({ saveVaultData(root) }, ::applyVaultData)
 addingRecord = false
 editingRecordId = null
-}
 },
 modifier = Modifier.weight(1f).height(46.dp),
 shape = RoundedCornerShape(10.dp),
@@ -640,22 +624,9 @@ Button(
 onClick = {
 val newNote = VaultNote(UUID.randomUUID().toString(), noteTitle, noteContent)
 val updatedList = vaultNotes + newNote
-val root = JSONObject().apply {
-val cArr = JSONArray()
-records.forEach { r ->
-cArr.put(JSONObject().apply { put("id", r.id); put("title", r.title); put("username", r.username); put("password", r.password); put("notes", r.notes) })
-}
-put("credentials", cArr)
-val nArr = JSONArray()
-updatedList.forEach { n ->
-nArr.put(JSONObject().apply { put("id", n.id); put("title", n.title); put("content", n.content) })
-}
-put("notes", nArr)
-}
-runAction({ saveVaultData(root.toString()) }) { result ->
-applyVaultData(result)
+val root = serializeVaultData(records, updatedList)
+runAction({ saveVaultData(root) }, ::applyVaultData)
 addingNote = false
-}
 },
 modifier = Modifier.weight(1f).height(46.dp),
 shape = RoundedCornerShape(10.dp),
@@ -669,4 +640,18 @@ Text("Salvar Nota", fontWeight = FontWeight.Bold, fontSize = 13.sp)
 }
 Spacer(Modifier.height(32.dp))
 }
+}
+internal fun serializeVaultData(credentials: List<VaultRecord>, notes: List<VaultNote>): String {
+val root = JSONObject()
+val cArr = JSONArray()
+credentials.forEach { r ->
+cArr.put(JSONObject().apply { put("id", r.id); put("title", r.title); put("username", r.username); put("password", r.password); put("notes", r.notes) })
+}
+root.put("credentials", cArr)
+val nArr = JSONArray()
+notes.forEach { n ->
+nArr.put(JSONObject().apply { put("id", n.id); put("title", n.title); put("content", n.content) })
+}
+root.put("notes", nArr)
+return root.toString()
 }

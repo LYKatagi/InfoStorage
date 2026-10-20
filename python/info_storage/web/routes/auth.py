@@ -45,12 +45,12 @@ def login(body: AuthRequest, request: Request) -> SessionResponse:
     except InvalidLoginError:
         raise HTTPException(
             status_code=401,
-            detail="Usuário ou senha inválidos.",
+            detail="Usuário ou senha inválidos, esqueceu sua senha ou username, ou vc é um hacker safado em?",
             headers={"WWW-Authenticate": "Bearer"},
         ) from None
     except InvalidVaultDataError:
         raise HTTPException(
-            status_code=422, detail="O cofre está inválido ou corrompido."
+            status_code=422, detail="O cofre está inválido ou corrompido, vc lembra suas senhas?"
         ) from None
 
     token = request.app.state.sessions.create(session)
