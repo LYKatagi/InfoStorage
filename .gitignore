@@ -1,0 +1,5 @@
+*.egg-info
+data/
+users/
+__pycache__
+*.pyc
