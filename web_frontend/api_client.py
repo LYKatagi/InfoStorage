@@ -1,3 +1,4 @@
+import os
 from typing import Any
 
 import requests
@@ -14,6 +15,7 @@ class InfoStorageAPI:
     def __init__(self, base_url: str, timeout: float = 5.0):
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
+        self.verify = os.getenv("INFOSTORAGE_API_CA", True)
 
     def register(self, username: str, password: str) -> dict[str, Any]:
         return self._request(
@@ -77,6 +79,7 @@ class InfoStorageAPI:
                 json=json,
                 params=params,
                 timeout=self.timeout,
+                verify=self.verify,
             )
         except requests.RequestException as error:
             raise APIError(None, "A API InfoStorage está indisponível.") from error
