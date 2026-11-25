@@ -1,5 +1,101 @@
-*.egg-info
-data/
-users/
-__pycache__
-*.pyc
+# ==========================================
+# DADOS SENSÍVEIS E SEGREDOS (CRÍTICO)
+# ==========================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+web/data/
+*.dat
+credentials.json
+
+# ==========================================
+# PYTHON (FastAPI / Flask / Pytest)
+# ==========================================
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Caches de Testes e Linters
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ==========================================
+# ANDROID / KOTLIN / GRADLE / CHAQUOPY
+# ==========================================
+*.apk
+*.aab
+*.ap_
+*.aab
+*.dex
+*.class
+.gradle/
+**/build/
+!**/src/**/build/
+captures/
+.externalNativeBuild/
+.cxx/
+local.properties
+proguard/
+*.hprof
+.navigation/
+
+# Mantém o Gradle Wrapper no Git (importante para CI/outros devs)
+!android/gradle/wrapper/gradle-wrapper.jar
+
+# ==========================================
+# CLAUDE CODE (Configurações locais)
+# ==========================================
+.claude/settings.local.json
+
+# ==========================================
+# IDEs, EDITORES E SISTEMA OPERACIONAL
+# ==========================================
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
