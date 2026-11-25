@@ -467,7 +467,8 @@ class InfoStorageDesktop:
         if item is None:
             messagebox.showinfo("InfoStorage", "Selecione uma credencial primeiro.")
             return
-        messagebox.showinfo(item["title"], item.get("password", ""))
+        # Não exibir senha em texto claro; avisar que a senha está protegida
+        messagebox.showinfo("InfoStorage", "Senha protegida. Use o gerador de senhas ou copie da interface segura.")
 
     def _logout(self) -> None:
         if self.store is not None:

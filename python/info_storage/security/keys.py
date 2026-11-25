@@ -1,5 +1,6 @@
 import base64
 import os
+import secrets
 
 from argon2 import Type
 from argon2.low_level import hash_secret_raw
@@ -74,6 +75,16 @@ class SecurityManager:
         self.crypto = Crypto(self.key)
 
     def lock(self) -> None:
+        # Tentativa de sobrescrever dados sensíveis na memória
+        if self.key is not None:
+            key_bytes = bytearray(self.key)
+            for i in range(len(key_bytes)):
+                key_bytes[i] = secrets.randbits(8)
+        if self.salt is not None:
+            salt_bytes = bytearray(self.salt)
+            for i in range(len(salt_bytes)):
+                salt_bytes[i] = secrets.randbits(8)
+
         self.salt = None
         self.key = None
         self.crypto = None

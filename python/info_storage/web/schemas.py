@@ -35,10 +35,10 @@ class AuthRequest(BaseModel):
     @classmethod
     def normalize_username(cls, value: object) -> str:
         if not isinstance(value, str):
-            raise ValueError("Nome de usuário inválido, seu nome deve ser estranho em")
+            raise ValueError("Nome de usuário inválido.")
         normalized = value.strip().casefold()
         if not normalized:
-            raise ValueError("Nome de usuário inválido, seu nome deve ser meio estranho em")
+            raise ValueError("Nome de usuário inválido.")
         return normalized
 
 

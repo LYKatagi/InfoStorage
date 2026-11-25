@@ -45,7 +45,7 @@ def login(body: AuthRequest, request: Request) -> SessionResponse:
     except InvalidLoginError:
         raise HTTPException(
             status_code=401,
-            detail="Usuário ou senha inválidos, esqueceu sua senha ou username, ou vc é um hacker safado em?",
+            detail="Usuário ou senha inválidos.",
             headers={"WWW-Authenticate": "Bearer"},
         ) from None
     except InvalidVaultDataError:

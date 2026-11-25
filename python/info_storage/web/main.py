@@ -84,7 +84,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return JSONResponse(
             status_code=422,
             content={
-                "detail": "O cofre está inválido ou sua integridade falhou. seu dados foram perdidos, YEY!!!"
+                "detail": "O cofre está inválido ou sua integridade falhou."
             },
         )
 
@@ -101,7 +101,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return JSONResponse(
             status_code=422,
             content={
-                "detail": "Os dados do cofre estão inválidos, puts, vc lembra suas senhas?"
+                "detail": "Os dados do cofre estão inválidos."
             },
         )
 
