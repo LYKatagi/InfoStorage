@@ -1,0 +1,28 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Android / Gradle
+.gradle/
+**/build/
+*.apk
+*.aab
+*.dex
+*.class
+*.webp
+local.properties
+android/gradle/wrapper/*.jar
+
+# Dados de Usuário, Git e IDEs
+web/data/
+*.dat
+.git/
+.idea/
+.vscode/
+*.log
